@@ -504,6 +504,7 @@ function StarterScreen({ profile, onDone, onAddToCloset }) {
       try{ const r=await getStarterSuggestions(profile); setData(r); }catch{}
       setLoading(false);
     })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
 
   const handleAdd = item => { setAdded(p=>({...p,[item.name]:true})); onAddToCloset(item); };
@@ -602,7 +603,7 @@ function ItemPanel({ item, wardrobe, onClose, onRefresh }) {
         <div style={{display:"flex",gap:13,marginBottom:18,background:"rgba(255,255,255,.03)",border:`1px solid ${BORDER}`,borderRadius:16,padding:13,alignItems:"flex-start"}}>
           <div style={{width:90,height:116,borderRadius:11,overflow:"hidden",flexShrink:0,background:"#1a1410",display:"flex",alignItems:"center",justifyContent:"center"}}>
             {item.url
-              ?<img src={item.url} style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+              ?<img alt="clothing item" src={item.url} style={{width:"100%",height:"100%",objectFit:"cover"}}/>
               :<div style={{fontSize:34,opacity:.5}}>{CAT_EMOJI[item.category]||"👔"}</div>
             }
           </div>
@@ -645,7 +646,7 @@ function ItemPanel({ item, wardrobe, onClose, onRefresh }) {
                     return (
                       <div key={i} style={{display:"flex",gap:11,alignItems:"center",background:"rgba(255,255,255,.03)",borderRadius:11,border:`1px solid rgba(184,151,90,.1)`,padding:"10px 12px"}}>
                         <div style={{width:40,height:52,borderRadius:8,overflow:"hidden",flexShrink:0,background:"#1a1410",display:"flex",alignItems:"center",justifyContent:"center"}}>
-                          {match?.url?<img src={match.url} style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+                          {match?.url?<img alt="wardrobe item" src={match.url} style={{width:"100%",height:"100%",objectFit:"cover"}}/>
                             :<span style={{fontSize:16}}>{CAT_EMOJI[match?.category]||"👔"}</span>}
                         </div>
                         <div>
@@ -912,7 +913,7 @@ export default function Labesni() {
       ) : (
         <div style={{display:"flex",gap:14,alignItems:"flex-start",background:"rgba(255,255,255,.03)",borderRadius:16,border:`1px solid ${BORDER}`,padding:14,marginBottom:4}}>
           <div style={{width:90,height:120,borderRadius:12,overflow:"hidden",flexShrink:0,background:"#1a1410"}}>
-            <img src={profile.bodyPhotoUrl} style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+            <img alt="body photo" src={profile.bodyPhotoUrl} style={{width:"100%",height:"100%",objectFit:"cover"}}/>
           </div>
           <div style={{flex:1}}>
             {bodyLoading ? (
@@ -1242,7 +1243,7 @@ export default function Labesni() {
                                   <div key={j} onClick={e=>{e.stopPropagation();if(wi)setExpandedItemId(wi.id);}}
                                     style={{display:"flex",flexDirection:"column",alignItems:"center",gap:3,cursor:"pointer"}}>
                                     <div style={{width:50,height:64,borderRadius:9,overflow:"hidden",background:"#1a1410",border:`1px solid ${BORDER}`,display:"flex",alignItems:"center",justifyContent:"center"}}>
-                                      {wi?.url?<img src={wi.url} style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+                                      {wi?.url?<img alt="outfit item" src={wi.url} style={{width:"100%",height:"100%",objectFit:"cover"}}/>
                                         :<span style={{fontSize:18}}>{CAT_EMOJI[wi?.category]||"👔"}</span>}
                                     </div>
                                     <span style={{fontSize:9,color:DIM,fontFamily:"'Outfit',sans-serif",textAlign:"center",maxWidth:50,lineHeight:1.3}}>{name}</span>
