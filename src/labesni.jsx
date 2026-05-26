@@ -65,7 +65,7 @@ async function callClaude(prompt, imgB64=null, imgMime=null) {
   const content = [];
   if(imgB64) content.push({ type:"image", source:{ type:"base64", media_type:imgMime, data:imgB64 }});
   content.push({ type:"text", text:prompt });
-  const res = await fetch("/api/claude",{
+  const res = await fetch("https://labesni-d9bj.onrender.com/api/claude",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body: JSON.stringify({ messages:[{role:"user",content}] })
