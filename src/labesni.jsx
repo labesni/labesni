@@ -348,17 +348,21 @@ function BuyBtn({ url, label="Buy Now →" }) {
 function SearchClothesScreen({ profile, onAddToCloset, onClose }) {
   const [query,setQuery]     = useState("");
   const [results,setResults] = useState([]);
+  const [searchError,setSearchError] = useState(null);
   const [loading,setLoading] = useState(false);
   const [added,setAdded]     = useState({});
   const [filter,setFilter]   = useState("all");
 
   const doSearch = async () => {
     if(!query.trim()) return;
-    setLoading(true); setResults([]);
+    setLoading(true); setResults([]); setSearchError(null);
     try {
       const r = await searchInternetClothes(query, profile);
       setResults(r);
-    } catch { }
+      if(!r||r.length===0) setSearchError("No results found. Try a different search.");
+    } catch(e) {
+      setSearchError("AI search failed: " + e.message);
+    }
     setLoading(false);
   };
 
@@ -474,7 +478,14 @@ function SearchClothesScreen({ profile, onAddToCloset, onClose }) {
           </>
         )}
 
-        {!loading&&results.length===0&&query&&(
+        {!loading&&searchError&&(
+          <div style={{textAlign:"center",padding:"32px 0",color:"#c0392b"}}>
+            <div style={{fontSize:40,marginBottom:10}}>⚠️</div>
+            <p style={{fontFamily:"'Outfit',sans-serif",fontSize:13}}>{searchError}</p>
+          </div>
+        )}
+
+        {!loading&&results.length===0&&query&&!searchError&&(
           <div style={{textAlign:"center",padding:"32px 0",color:MUTE}}>
             <div style={{fontSize:40,marginBottom:10}}>🔍</div>
             <p style={{fontFamily:"'Outfit',sans-serif",fontSize:13}}>No results yet — try searching above</p>
