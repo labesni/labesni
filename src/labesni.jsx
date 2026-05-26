@@ -931,6 +931,7 @@ export default function Labesni() {
   const [showSearch,setShowSearch]         = useState(false);
   const [error,setError]                   = useState("");
   const [showCamera,setShowCamera]         = useState(false);
+  const [bodyLoading,setBodyLoading]       = useState(false);
   const [cameraStream,setCameraStream]     = useState(null);
   const [activeNav,setActiveNav]           = useState("wardrobe");
   const videoRef=useRef(null),canvasRef=useRef(null),fileRef=useRef(null);
