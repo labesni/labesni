@@ -54,10 +54,12 @@ const parseJSON = raw => { try{ return JSON.parse(raw.replace(/```json|```/g,"")
 
 /* Build a DIRECT product URL for a store */
 function buildBuyUrl(store, productName, color="") {
+  const q = encodeURIComponent((productName+" "+color).trim());
   const s = STORES[store];
-  if(!s) return `https://www.google.com/search?q=${encodeURIComponent(store+" "+productName+" "+color+" Tunisia")}`;
-  const query = encodeURIComponent(`${productName} ${color}`.trim());
-  return s.url + query;
+  // Always use Google Shopping as fallback - always works
+  const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(store+" "+productName+" "+color)}&tbm=shop`;
+  if(!s) return googleUrl;
+  return s.url + q;
 }
 
 /* ─── CLAUDE API ─── */
@@ -473,7 +475,7 @@ function SearchClothesScreen({ profile, onAddToCloset, onClose }) {
                   </div>
                   <div style={{fontSize:12,color:MUTE,fontFamily:"'Outfit',sans-serif",lineHeight:1.65,marginBottom:12}}>{item.description}</div>
                   <div style={{display:"flex",gap:8}}>
-                    <BuyBtn url={item.buyUrl} label="Buy Directly"/>
+                    <BuyBtn url={item.buyUrl} label="Search in Store →"/>
                     <button onClick={()=>handleAdd(item)} disabled={added[item.name]} style={{
                       flex:1,padding:"9px 12px",borderRadius:10,cursor:added[item.name]?"default":"pointer",
                       border:added[item.name]?"1px solid rgba(90,154,90,.3)":"1px solid rgba(184,151,90,.22)",
