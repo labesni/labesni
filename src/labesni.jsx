@@ -71,7 +71,7 @@ async function callClaude(prompt, imgB64=null, imgMime=null) {
     body: JSON.stringify({ messages:[{role:"user",content}] })
   });
   const d = await res.json();
-  if(d.error) throw new Error(d.error);
+  if(d.error) throw new Error(JSON.stringify(d.error));
   if(!d.content) throw new Error('Bad response: '+JSON.stringify(d).slice(0,200));
   return d.content.map(b=>b.text||"").join("");
 }
