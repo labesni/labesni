@@ -264,11 +264,6 @@ Return ONLY valid JSON:
     } : null
   }));
 }
-      ...o.buyToComplete,
-      buyUrl: buildBuyUrl(o.buyToComplete.brand, o.buyToComplete.name, o.buyToComplete.color)
-    } : null
-  }));
-}
 
 /* ══════════════════════
    MICRO COMPONENTS
