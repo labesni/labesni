@@ -132,7 +132,8 @@ Return ONLY valid JSON:
   "style":"Casual|Formal|Sporty|Elegant|Streetwear|Classic",
   "material":"material",
   "priceTND":"estimated price e.g. 80–120 TND",
-  "description":"one sentence description"
+  "description":"one sentence description",
+  "imageKeyword":"specific clothing photo keyword e.g. black nike sneakers, white linen shirt"
 }]}`
   );
   const parsed = parseJSON(raw);
@@ -446,8 +447,15 @@ function SearchClothesScreen({ profile, onAddToCloset, onClose }) {
             <div style={{display:"flex",flexDirection:"column",gap:12}}>
               {filtered.map((item,i)=>(
                 <div key={i} style={{background:"rgba(255,255,255,.03)",borderRadius:16,
-                  border:`1px solid ${added[item.name]?"rgba(90,154,90,.3)":BORDER}`,padding:"14px 16px",
-                  transition:"border-color .2s"}}>
+                  border:`1px solid ${added[item.name]?"rgba(90,154,90,.3)":BORDER}`,
+                  overflow:"hidden",transition:"border-color .2s"}}>
+                  <img
+                    src={`https://source.unsplash.com/400x300/?fashion,${encodeURIComponent(item.imageKeyword||item.name)}`}
+                    alt={item.name}
+                    style={{width:"100%",height:180,objectFit:"cover",display:"block"}}
+                    onError={e=>{e.target.style.display="none";}}
+                  />
+                  <div style={{padding:"14px 16px"}}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
                     <div style={{flex:1,marginRight:10}}>
                       <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:5}}>
@@ -473,6 +481,7 @@ function SearchClothesScreen({ profile, onAddToCloset, onClose }) {
                       color:added[item.name]?"#7aba7a":CREAM,
                       fontFamily:"'Outfit',sans-serif",fontSize:12,letterSpacing:.5,transition:"all .2s"
                     }}>{added[item.name]?"✓ In Closet":"+ Add to Closet"}</button>
+                  </div>
                   </div>
                 </div>
               ))}
