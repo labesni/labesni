@@ -12,15 +12,15 @@ const STORES = {
   "Stradivarius TN":   { url:"https://www.stradivarius.com/tn/en/search?q=",            logo:"S",  color:"#7a6a5a", tag:"Int'l" },
   "H&M Tunisia":       { url:"https://www2.hm.com/tn_ar/search-results.html?q=",        logo:"H&M",color:"#cc0000", tag:"Int'l" },
   // ── Sports brands ──
-  "Nike Tunisia":      { url:"https://www.jumia.com.tn/catalog/?q=nike+",               logo:"✓",  color:"#111111", tag:"Sport" },
-  "Adidas Tunisia":    { url:"https://www.jumia.com.tn/catalog/?q=adidas+",             logo:"A",  color:"#000000", tag:"Sport" },
-  "New Balance TN":    { url:"https://www.jumia.com.tn/catalog/?q=new+balance+",        logo:"NB", color:"#cf142b", tag:"Sport" },
-  "Puma Tunisia":      { url:"https://www.jumia.com.tn/catalog/?q=puma+",               logo:"P",  color:"#00552c", tag:"Sport" },
+  "Nike Tunisia":      { url:"https://www.jumia.com.tn/nike-shoes/?q=",               logo:"✓",  color:"#111111", tag:"Sport" },
+  "Adidas Tunisia":    { url:"https://www.jumia.com.tn/adidas/?q=",             logo:"A",  color:"#000000", tag:"Sport" },
+  "New Balance TN":    { url:"https://www.jumia.com.tn/new-balance/?q=",        logo:"NB", color:"#cf142b", tag:"Sport" },
+  "Puma Tunisia":      { url:"https://www.jumia.com.tn/puma/?q=",               logo:"P",  color:"#00552c", tag:"Sport" },
   // ── Budget / Local ──
   "LC Waikiki TN":     { url:"https://www.lcwaikiki.com/tn-TN/TN/search?q=",            logo:"LC", color:"#0066cc", tag:"Budget" },
   "Defacto TN":        { url:"https://www.defacto.com/search?q=",                       logo:"D",  color:"#003d99", tag:"Budget" },
   // ── Tunisian marketplace ──
-  "Jumia Tunisia":     { url:"https://www.jumia.com.tn/catalog/?q=",                    logo:"J",  color:"#f68b1e", tag:"Marketplace" },
+  "Jumia Tunisia":     { url:"https://www.jumia.com.tn/mltn/?q=",                    logo:"J",  color:"#f68b1e", tag:"Marketplace" },
   "Tayara Fashion":    { url:"https://www.tayara.tn/ads/c/Mode_et_Vetements/?q=",       logo:"T",  color:"#e84b4b", tag:"Local" },
   // ── Local Tunisian brands ──
   "Azura TN":          { url:"https://www.azura-boutique.com/search?q=",                logo:"Az", color:"#0080ff", tag:"Local" },
@@ -54,12 +54,8 @@ const parseJSON = raw => { try{ return JSON.parse(raw.replace(/```json|```/g,"")
 
 /* Build a DIRECT product URL for a store */
 function buildBuyUrl(store, productName, color="") {
-  const q = encodeURIComponent((productName+" "+color).trim());
-  const s = STORES[store];
-  // Always use Google Shopping as fallback - always works
-  const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(store+" "+productName+" "+color)}&tbm=shop`;
-  if(!s) return googleUrl;
-  return s.url + q;
+  // Always use Google Shopping - always works, no broken links
+  return `https://www.google.com/search?q=${encodeURIComponent(productName+" "+color+" buy Tunisia")}&tbm=shop`;
 }
 
 /* ─── CLAUDE API ─── */
