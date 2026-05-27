@@ -1,4 +1,9 @@
 import { useState, useRef, useEffect } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+const SUPABASE_URL = "https://hrkqturmrpevkbrqwtmk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_jUN34AaPZbs92zPOtKVH4A_XtB_bZ2F";
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 /* ══════════════════════════════════════════
    TUNISIAN STORE CATALOGUE — VERIFIED URLS
@@ -1001,6 +1006,66 @@ export default function Labesni() {
   const videoRef=useRef(null),canvasRef=useRef(null),fileRef=useRef(null);
 
   const toggleArr=(key,val)=>setProfile(p=>({...p,[key]:p[key].includes(val)?p[key].filter(x=>x!==val):[...p[key],val]}));
+  const [user,setUser] = useState(null);
+  const [authLoading,setAuthLoading] = useState(true);
+
+  /* ── Auth ── */
+  useEffect(()=>{
+    supabase.auth.getSession().then(({data:{session}})=>{
+      setUser(session?.user||null);
+      setAuthLoading(false);
+    });
+    const {data:{subscription}} = supabase.auth.onAuthStateChange((_,session)=>{
+      setUser(session?.user||null);
+      if(session?.user) loadUserData(session.user.id);
+    });
+    return ()=>subscription.unsubscribe();
+  },[]);
+
+  const signInWithGoogle = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider:"google",
+      options:{ redirectTo: window.location.origin }
+    });
+  };
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+  };
+
+  /* ── Load user data from Supabase ── */
+  const loadUserData = async (uid) => {
+    try {
+      const {data:prof} = await supabase.from("profiles").select("*").eq("id",uid).single();
+      if(prof) { setProfile({name:prof.name||"",gender:prof.gender||"",styles:prof.styles||[],occasions:prof.occasions||[],budget:prof.budget||"",brands:prof.brands||[],city:prof.city||"Tunis"}); setScreen("wardrobe"); }
+      const {data:ward} = await supabase.from("wardrobe").select("*").eq("user_id",uid);
+      if(ward?.length) setWardrobe(ward.map(i=>({...i,id:i.id,colorHex:i.color_hex,priceTND:i.price_tnd,buyUrl:i.buy_url,url:i.image_url,analyzing:false,suggestions:null,loadingSugg:false})));
+    } catch{}
+  };
+
+  /* ── Save wardrobe item to Supabase ── */
+  const saveItemToSupabase = async (item) => {
+    if(!user) return;
+    try {
+      await supabase.from("wardrobe").upsert({
+        id: item.id, user_id: user.id, name: item.name, category: item.category,
+        color: item.color, color_hex: item.colorHex, style: item.style,
+        brand: item.brand, price_tnd: item.priceTND, buy_url: item.buyUrl, image_url: item.url
+      });
+    } catch{}
+  };
+
+  /* ── Save profile to Supabase ── */
+  const saveProfileToSupabase = async (p) => {
+    if(!user) return;
+    try {
+      await supabase.from("profiles").upsert({
+        id: user.id, name:p.name, gender:p.gender, styles:p.styles,
+        occasions:p.occasions, budget:p.budget, city:p.city, brands:p.brands
+      });
+    } catch{}
+  };
 
   /* ── Save to localStorage ── */
   useEffect(()=>{ try{ localStorage.setItem("labesni_wardrobe", JSON.stringify(wardrobe.map(i=>({...i,loadingSugg:false,analyzing:false})))); }catch{} },[wardrobe]);
@@ -1133,9 +1198,7 @@ export default function Labesni() {
         Tell us your style — get a full wardrobe plan with direct buy links from Zara, Nike TN, Jumia and more.
       </p>
       <GoldBtn onClick={()=>setOnbStep(1)} style={{maxWidth:260,margin:"0 auto"}}>Get Started</GoldBtn>
-      <button onClick={()=>{
-        const w=window.open("https://accounts.google.com/o/oauth2/v2/auth?client_id=YOUR_GOOGLE_CLIENT_ID&redirect_uri="+encodeURIComponent(window.location.origin)+"&response_type=token&scope=email%20profile","_blank","width=500,height=600");
-      }} style={{
+      <button onClick={signInWithGoogle} style={{
         width:"100%",maxWidth:260,margin:"10px auto 0",display:"flex",alignItems:"center",justifyContent:"center",gap:10,
         padding:"13px 24px",borderRadius:14,border:"1.5px solid rgba(201,169,110,.3)",
         background:"rgba(255,255,255,.05)",cursor:"pointer",fontFamily:"'Outfit',sans-serif",fontSize:14,color:CREAM
@@ -1306,7 +1369,14 @@ export default function Labesni() {
               </div>
                 <span style={{fontSize:10,color:GOLD,background:"rgba(201,169,110,.12)",border:`1px solid rgba(201,169,110,.3)`,borderRadius:20,padding:"2px 7px",fontFamily:"'Outfit',sans-serif"}}>🇹🇳 TN</span>
               </div>
-              {profile.name&&<div style={{fontSize:9,color:MUTE,letterSpacing:2,fontFamily:"'Outfit',sans-serif",marginTop:1}}>HI, {profile.name.toUpperCase()}</div>}
+              {user
+              ? <div style={{display:"flex",alignItems:"center",gap:5,marginTop:2}}>
+                  <img src={user.user_metadata?.avatar_url} alt="avatar" style={{width:20,height:20,borderRadius:"50%",border:`1px solid ${GOLD}`}}/>
+                  <span style={{fontSize:9,color:GOLD,fontFamily:"'Outfit',sans-serif"}}>{user.user_metadata?.name?.split(" ")[0]?.toUpperCase()}</span>
+                  <button onClick={signOut} style={{background:"none",border:"none",color:MUTE,fontSize:9,cursor:"pointer",fontFamily:"'Outfit',sans-serif"}}>out</button>
+                </div>
+              : <button onClick={signInWithGoogle} style={{background:"rgba(201,169,110,.1)",border:`1px solid rgba(201,169,110,.3)`,borderRadius:20,padding:"2px 8px",color:GOLD,fontSize:9,cursor:"pointer",fontFamily:"'Outfit',sans-serif",marginTop:2}}>Sign in</button>
+            }
               <div style={{display:"flex",gap:3,marginTop:3}}>
                 {["en","fr","ar"].map(l=>(
                   <button key={l} onClick={()=>setLang(l)} style={{
