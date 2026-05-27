@@ -1353,9 +1353,9 @@ export default function Labesni() {
       {/* ══ MAIN APP ══ */}
       {["wardrobe","style","outfits","community"].includes(screen)&&(
         <>
-          <header style={{padding:"13px 16px 11px",display:"flex",alignItems:"center",justifyContent:"space-between",
-            borderBottom:`1px solid rgba(201,169,110,.2)`,background:"rgba(250,248,245,.95)",backdropFilter:"blur(16px)",position:"sticky",top:0,zIndex:100}}>
-            <div>
+          <header style={{padding:"10px 16px",display:"flex",alignItems:"center",justifyContent:"space-between",
+            borderBottom:`1px solid rgba(201,169,110,.15)`,background:"rgba(250,248,245,.97)",backdropFilter:"blur(16px)",position:"sticky",top:0,zIndex:100}}>
+            <div style={{display:"flex",alignItems:"center",gap:10}}>
               <div style={{display:"flex",alignItems:"center",gap:7}}>
                 <div style={{display:"flex",alignItems:"center",gap:7}}>
                 <svg width="32" height="32" viewBox="0 0 680 420" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1380,23 +1380,26 @@ export default function Labesni() {
               </div>
                 <span style={{fontSize:10,color:GOLD,background:"rgba(201,169,110,.12)",border:`1px solid rgba(201,169,110,.3)`,borderRadius:20,padding:"2px 7px",fontFamily:"'Outfit',sans-serif"}}>🇹🇳 TN</span>
               </div>
-              {user
-              ? <div style={{display:"flex",alignItems:"center",gap:5,marginTop:2}}>
-                  <img src={user.user_metadata?.avatar_url} alt="avatar" style={{width:20,height:20,borderRadius:"50%",border:`1px solid ${GOLD}`}}/>
-                  <span style={{fontSize:9,color:GOLD,fontFamily:"'Outfit',sans-serif"}}>{user.user_metadata?.name?.split(" ")[0]?.toUpperCase()}</span>
-                  <button onClick={signOut} style={{background:"none",border:"none",color:MUTE,fontSize:9,cursor:"pointer",fontFamily:"'Outfit',sans-serif"}}>out</button>
+              <div style={{display:"flex",alignItems:"center",gap:8}}>
+                <div style={{display:"flex",gap:3}}>
+                  {["en","fr","ar"].map(l=>(
+                    <button key={l} onClick={()=>setLang(l)} style={{
+                      padding:"3px 7px",borderRadius:8,border:`1px solid ${lang===l?GOLD:"rgba(180,150,100,.15)"}`,
+                      background:lang===l?"rgba(201,169,110,.15)":"transparent",
+                      color:lang===l?GOLD:MUTE,fontSize:9,fontFamily:"'Outfit',sans-serif",cursor:"pointer",fontWeight:lang===l?600:400
+                    }}>{l.toUpperCase()}</button>
+                  ))}
                 </div>
-              : <button onClick={signInWithGoogle} style={{background:"rgba(201,169,110,.1)",border:`1px solid rgba(201,169,110,.3)`,borderRadius:20,padding:"2px 8px",color:GOLD,fontSize:9,cursor:"pointer",fontFamily:"'Outfit',sans-serif",marginTop:2}}>Sign in</button>
-            }
-              <div style={{display:"flex",gap:3,marginTop:3}}>
-                {["en","fr","ar"].map(l=>(
-                  <button key={l} onClick={()=>setLang(l)} style={{
-                    padding:"1px 6px",borderRadius:10,border:`1px solid ${lang===l?GOLD:"rgba(180,150,100,.2)"}`,
-                    background:lang===l?"rgba(201,169,110,.15)":"transparent",
-                    color:lang===l?GOLD:MUTE,fontSize:9,fontFamily:"'Outfit',sans-serif",cursor:"pointer",
-                    fontWeight:lang===l?600:400
-                  }}>{l.toUpperCase()}</button>
-                ))}
+                {user
+                  ? <div style={{display:"flex",alignItems:"center",gap:6,background:"rgba(201,169,110,.08)",border:`1px solid rgba(201,169,110,.2)`,borderRadius:20,padding:"4px 10px 4px 4px",cursor:"pointer"}} onClick={signOut}>
+                      <img src={user.user_metadata?.avatar_url} alt="avatar" style={{width:24,height:24,borderRadius:"50%",border:`1.5px solid ${GOLD}`}}/>
+                      <span style={{fontSize:10,color:CREAM,fontFamily:"'Outfit',sans-serif",fontWeight:500}}>{user.user_metadata?.name?.split(" ")[0]}</span>
+                    </div>
+                  : <button onClick={signInWithGoogle} style={{display:"flex",alignItems:"center",gap:5,background:"rgba(201,169,110,.1)",border:`1px solid rgba(201,169,110,.3)`,borderRadius:20,padding:"5px 12px",color:GOLD,fontSize:11,cursor:"pointer",fontFamily:"'Outfit',sans-serif",fontWeight:600}}>
+                      <svg width="12" height="12" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z"/></svg>
+                      Sign in
+                    </button>
+                }
               </div>
             </div>
             <nav style={{display:"flex",gap:5}}>
