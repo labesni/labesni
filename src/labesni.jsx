@@ -43,6 +43,37 @@ const CAT_EMOJI = { tops:"👕",bottoms:"👖",shoes:"👟",outerwear:"🧥",acc
 const CATS = ["tops","bottoms","shoes","outerwear","accessories","dresses"];
 const VIBE_CLR = { Sharp:"#2c3e50",Relaxed:"#27ae60",Bold:"#c0392b",Elegant:"#8e44ad",Classic:"#d4a017",Fresh:"#2980b9",Fusion:"#e67e22",default:"#b8975a" };
 
+/* ─── TRANSLATIONS ─── */
+const TRANS = {
+  en: {
+    closet:"Closet", style:"Style", feed:"Feed", shop:"Shop", looks:"Looks",
+    search:"Search Clothes", searchPlaceholder:"e.g. white linen shirt, black sneakers...",
+    addCloset:"+ Add to Closet", inCloset:"✓ In Closet", buyBtn:"Search in Store →",
+    getStarted:"Get Started", tagline:"Tunisia's AI Fashion Stylist",
+    aiTip:"AI STYLE TIP", pairs:"PAIRS WITH FROM YOUR CLOSET", shopLook:"SHOP TO COMPLETE YOUR LOOK",
+    trend:"2025 TREND", getSugg:"Get Suggestions", noResults:"No results found. Try a different search.",
+    searching:"Searching Tunisian stores…", building:"Building your Tunisian looks…",
+  },
+  fr: {
+    closet:"Garde-robe", style:"Style", feed:"Feed", shop:"Boutique", looks:"Looks",
+    search:"Rechercher des vêtements", searchPlaceholder:"ex. chemise blanche, baskets noires...",
+    addCloset:"+ Ajouter", inCloset:"✓ Ajouté", buyBtn:"Voir en boutique →",
+    getStarted:"Commencer", tagline:"Le styliste IA de Tunisie",
+    aiTip:"CONSEIL STYLE IA", pairs:"ASSOCIER AVEC VOTRE GARDE-ROBE", shopLook:"COMPLÉTER LE LOOK",
+    trend:"TENDANCE 2025", getSugg:"Obtenir des suggestions", noResults:"Aucun résultat. Essayez autre chose.",
+    searching:"Recherche en cours…", building:"Création de vos looks…",
+  },
+  ar: {
+    closet:"خزانتي", style:"الستايل", feed:"المجتمع", shop:"تسوق", looks:"اللوكات",
+    search:"ابحث عن ملابس", searchPlaceholder:"مثال: قميص أبيض، حذاء رياضي أسود...",
+    addCloset:"+ أضف للخزانة", inCloset:"✓ مضاف", buyBtn:"ابحث في المتجر →",
+    getStarted:"ابدأ", tagline:"مصمم الأزياء الذكي في تونس",
+    aiTip:"نصيحة الستايل", pairs:"يتناسب مع خزانتك", shopLook:"أكمل اللوك",
+    trend:"ترند 2025", getSugg:"احصل على اقتراحات", noResults:"لا توجد نتائج. جرب بحثاً آخر.",
+    searching:"جاري البحث…", building:"جاري إنشاء لوكاتك…",
+  }
+};
+
 /* ─── TOKENS ─── */
 const BG="#faf8f5",GOLD="#c9a96e",CREAM="#1a1a1a",DIM="#7a6a5a",MUTE="#b0a090",BORDER="rgba(180,150,100,.18)";
 const CARD="rgba(255,255,255,.9)",CARDBORDER="rgba(180,150,100,.2)";
@@ -390,7 +421,7 @@ function SearchClothesScreen({ profile, onAddToCloset, onClose }) {
 
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
           <div>
-            <div style={{fontSize:18,fontWeight:600,color:CREAM,fontFamily:"'Playfair Display',serif"}}>Search Clothes</div>
+            <div style={{fontSize:18,fontWeight:600,color:CREAM,fontFamily:"'Playfair Display',serif"}}>{TRANS[localStorage.getItem("labesni_lang")||"en"]?.search||"Search Clothes"}</div>
             <div style={{fontSize:11,color:MUTE,fontFamily:"'Outfit',sans-serif",marginTop:2}}>Find & add items from Tunisian stores</div>
           </div>
           <button onClick={onClose} style={{background:"rgba(201,169,110,.1)",border:`1px solid rgba(201,169,110,.3)`,
@@ -946,10 +977,15 @@ function CommunityFeed({ profile, wardrobe }) {
    MAIN APP
 ══════════════════════════════════════════ */
 export default function Labesni() {
-  const [screen,setScreen]                 = useState("onboarding");
+  const savedProfile = (() => { try { const p=localStorage.getItem("labesni_profile"); return p?JSON.parse(p):null; } catch{return null;} })();
+  const savedWardrobe = (() => { try { const w=localStorage.getItem("labesni_wardrobe"); return w?JSON.parse(w):[]; } catch{return [];} })();
+  const savedLang = (() => { try { return localStorage.getItem("labesni_lang")||"en"; } catch{return "en";} })();
+
+  const [screen,setScreen]                 = useState(savedProfile?.gender ? "wardrobe" : "onboarding");
   const [onbStep,setOnbStep]               = useState(0);
-  const [profile,setProfile]               = useState({ name:"",gender:"",styles:[],occasions:[],budget:"",brands:[],city:"Tunis" });
-  const [wardrobe,setWardrobe]             = useState([]);
+  const [profile,setProfile]               = useState(savedProfile || { name:"",gender:"",styles:[],occasions:[],budget:"",brands:[],city:"Tunis" });
+  const [wardrobe,setWardrobe]             = useState(savedWardrobe);
+  const [lang,setLang]                     = useState(savedLang);
   const [occasion,setOccasion]             = useState("");
   const [styleVision,setStyleVision]       = useState("");
   const [outfits,setOutfits]               = useState([]);
@@ -965,6 +1001,11 @@ export default function Labesni() {
   const videoRef=useRef(null),canvasRef=useRef(null),fileRef=useRef(null);
 
   const toggleArr=(key,val)=>setProfile(p=>({...p,[key]:p[key].includes(val)?p[key].filter(x=>x!==val):[...p[key],val]}));
+
+  /* ── Save to localStorage ── */
+  useEffect(()=>{ try{ localStorage.setItem("labesni_wardrobe", JSON.stringify(wardrobe.map(i=>({...i,loadingSugg:false,analyzing:false})))); }catch{} },[wardrobe]);
+  useEffect(()=>{ try{ localStorage.setItem("labesni_profile", JSON.stringify(profile)); }catch{} },[profile]);
+  useEffect(()=>{ try{ localStorage.setItem("labesni_lang", lang); }catch{} },[lang]);
 
   /* ── body photo analysis ── */
   const handleBodyPhoto = async file => {
@@ -1052,6 +1093,7 @@ export default function Labesni() {
     setLoadingOutfits(false);
   };
 
+  const T = TRANS[lang]||TRANS.en;
   const expandedItem=wardrobe.find(i=>i.id===expandedItemId);
   const readyCount=wardrobe.filter(i=>!i.analyzing).length;
 
@@ -1169,7 +1211,7 @@ export default function Labesni() {
 
   /* ══════════════ RENDER ══════════════ */
   return (
-    <div style={{minHeight:"100vh",background:BG,color:CREAM,fontFamily:"'Playfair Display',serif",position:"relative",overflowX:"hidden"}}>
+    <div style={{minHeight:"100vh",background:BG,color:CREAM,fontFamily:"'Playfair Display',serif",position:"relative",overflowX:"hidden",direction:lang==="ar"?"rtl":"ltr"}}>
       <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
       <canvas ref={canvasRef} style={{display:"none"}}/>
       <style>{`
@@ -1265,9 +1307,19 @@ export default function Labesni() {
                 <span style={{fontSize:10,color:GOLD,background:"rgba(201,169,110,.12)",border:`1px solid rgba(201,169,110,.3)`,borderRadius:20,padding:"2px 7px",fontFamily:"'Outfit',sans-serif"}}>🇹🇳 TN</span>
               </div>
               {profile.name&&<div style={{fontSize:9,color:MUTE,letterSpacing:2,fontFamily:"'Outfit',sans-serif",marginTop:1}}>HI, {profile.name.toUpperCase()}</div>}
+              <div style={{display:"flex",gap:3,marginTop:3}}>
+                {["en","fr","ar"].map(l=>(
+                  <button key={l} onClick={()=>setLang(l)} style={{
+                    padding:"1px 6px",borderRadius:10,border:`1px solid ${lang===l?GOLD:"rgba(180,150,100,.2)"}`,
+                    background:lang===l?"rgba(201,169,110,.15)":"transparent",
+                    color:lang===l?GOLD:MUTE,fontSize:9,fontFamily:"'Outfit',sans-serif",cursor:"pointer",
+                    fontWeight:lang===l?600:400
+                  }}>{l.toUpperCase()}</button>
+                ))}
+              </div>
             </div>
             <nav style={{display:"flex",gap:5}}>
-              {[{k:"wardrobe",l:"Closet"+(wardrobe.length>0?" ("+wardrobe.length+")":" ")},{k:"style",l:"Style"},{k:"community",l:"Feed"},...(outfits.length>0?[{k:"outfits",l:"Looks"}]:[])]
+              {[{k:"wardrobe",l:T.closet+(wardrobe.length>0?" ("+wardrobe.length+")":" ")},{k:"style",l:T.style},{k:"community",l:T.feed},...(outfits.length>0?[{k:"outfits",l:T.looks}]:[])]
                 .map(({k,l})=>(
                 <button key={k} onClick={()=>{setScreen(k);setActiveNav(k);}} style={{
                   background:activeNav===k?"rgba(201,169,110,.15)":"transparent",
@@ -1501,10 +1553,10 @@ export default function Labesni() {
           <nav style={{position:"fixed",bottom:0,left:0,right:0,zIndex:200,
             background:"rgba(250,248,245,.97)",backdropFilter:"blur(20px)",
             borderTop:`1px solid rgba(201,169,110,.2)`,display:"flex",justifyContent:"space-around",padding:"10px 0 10px"}}>
-            {[{k:"wardrobe",icon:"👗",l:"Closet"},{k:"style",icon:"✨",l:"Style"},
-              {k:"community",icon:"🤍",l:"Feed"},
-              {k:"search",icon:"🔍",l:"Shop",action:()=>setShowSearch(true)},
-              ...(outfits.length>0?[{k:"outfits",icon:"📋",l:"Looks"}]:[])
+            {[{k:"wardrobe",icon:"👗",l:T.closet},{k:"style",icon:"✨",l:T.style},
+              {k:"community",icon:"🤍",l:T.feed},
+              {k:"search",icon:"🔍",l:T.shop,action:()=>setShowSearch(true)},
+              ...(outfits.length>0?[{k:"outfits",icon:"📋",l:T.looks}]:[])
             ].map(({k,icon,l,action})=>(
               <button key={k} onClick={()=>{ if(action){action();}else{setScreen(k);setActiveNav(k);} }} style={{
                 background:"none",border:"none",cursor:"pointer",
