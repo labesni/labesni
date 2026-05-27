@@ -448,7 +448,7 @@ function SearchClothesScreen({ profile, onAddToCloset, onClose }) {
                   border:`1px solid ${added[item.name]?"rgba(90,154,90,.3)":BORDER}`,
                   overflow:"hidden",transition:"border-color .2s"}}>
                   <img
-                    src={`https://source.unsplash.com/400x300/?fashion,${encodeURIComponent(item.imageKeyword||item.name)}`}
+                    src={`https://loremflickr.com/400/300/${encodeURIComponent((item.imageKeyword||item.name).split(" ").slice(0,3).join(","))}`}
                     alt={item.name}
                     style={{width:"100%",height:180,objectFit:"cover",display:"block"}}
                     onError={e=>{e.target.style.display="none";}}
