@@ -163,38 +163,29 @@ Return ONLY valid JSON:
 async function getItemSuggestions(item, wardrobe, profile) {
   const others = wardrobe.filter(w=>w.id!==item.id&&!w.analyzing).map(w=>`${w.name}(${w.category},${w.color})`).join("; ")||"none";
   const raw = await callClaude(
-    `You are Labesni, a Tunisian AI fashion stylist. Respond in English only. Be specific and personal — reference the actual item by name and color.
+    `You are a world-class fashion stylist with expert knowledge of global fashion trends, color theory, and 2025 street style. You know what goes with what.
 User: gender=${profile.gender||"unisex"}, styles=${profile.styles?.join(",")||"any"}, budget=${profile.budget||"mid"}, city=${profile.city||"Tunis"}.
-IMPORTANT — City context: The user is in ${profile.city||"Tunis"}. Suggest stores that ship to or are accessible from ${profile.city||"Tunis"}. For users in smaller cities (Kasserine, Gabès, Sidi Bouzid, Tataouine, Tozeur, Kebili, Medenine, etc.), prioritize online stores like Jumia Tunisia and Tayara that deliver nationwide, plus any local Tunisian brands. For larger cities (Tunis, Sfax, Sousse, Bizerte), include all store types.
-Item: "${item.name}" – ${item.category}, ${item.color}${item.colorHex?" ("+item.colorHex+")":""}, style: ${item.style||"casual"}.
-Wardrobe: ${others}.
-Available stores: ${STORE_NAMES.join(", ")}.
+Item: "${item.name}" - ${item.category}, ${item.color}, style: ${item.style||"casual"}.
+Wardrobe they own: ${others}.
+Available stores in Tunisia: ${STORE_NAMES.join(", ")}.
 
-Be specific — e.g. "Your ${item.color} ${item.name} pairs perfectly with slim navy chinos" or "This ${item.color} ${item.category} works great for a casual Tunisian summer look".
-Mix different brands/stores for buyItems.
-
+Use REAL fashion expertise - color theory, 2025 trends, outfit formulas.
 Return ONLY valid JSON:
 {
-  "closetPairs":[{"name":"wardrobe item name","reason":"specific reason referencing the ${item.color} ${item.name} and how they work together"}],
-  "buyItems":[{
-    "name":"product name",
-    "brand":"store name from available list — prefer delivery-friendly stores for ${profile.city||"Tunis"}",
-    "category":"clothing type",
-    "color":"color",
-    "colorHex":"#hex",
-    "why":"specific styling tip: how this item pairs with the ${item.color} ${item.name} for ${profile.city||"Tunis"} context",
-    "priceTND":"xx–xx TND",
-    "description":"short product description"
-  }],
-  "styleTip":"one practical tip specifically about styling this ${item.color} ${item.name} in ${profile.city||"Tunis"}"
+  "closetPairs":[{"name":"wardrobe item name","reason":"expert styling reason with color theory or trend"}],
+  "buyItems":[{"name":"product","brand":"store from list","category":"type","color":"color","colorHex":"#hex","why":"expert fashion reason","priceTND":"xx-xx TND","description":"short desc","searchQuery":"Google search term"}],
+  "styleTip":"expert tip referencing 2025 trend or color rule",
+  "trendAlert":"one 2025 trend that applies to this item"
 }
-closetPairs: up to 3. buyItems: exactly 3, ALL from DIFFERENT stores.`
+closetPairs: up to 3. buyItems: exactly 3, ALL different stores.`
   );
-  const parsed = parseJSON(raw)||{closetPairs:[],buyItems:[],styleTip:""};
+  const parsed = parseJSON(raw)||{closetPairs:[],buyItems:[],styleTip:"",trendAlert:""};
   if(parsed.buyItems) {
     parsed.buyItems = parsed.buyItems.map(b=>({
       ...b,
-      buyUrl: buildBuyUrl(b.brand, b.name, b.color)
+      buyUrl: b.searchQuery
+        ? `https://www.google.com/search?q=${encodeURIComponent(b.searchQuery)}&tbm=shop`
+        : buildBuyUrl(b.brand, b.name, b.color)
     }));
   }
   return parsed;
@@ -617,7 +608,9 @@ function StarterScreen({ profile, onDone, onAddToCloset }) {
 /* ══════════════════════════
    ITEM DETAIL PANEL
 ══════════════════════════ */
-function ItemPanel({ item, wardrobe, onClose, onRefresh }) {
+function ItemPanel({ item, wardrobe, onClose, onRefresh, onRename }) {
+  const [editing, setEditing] = React.useState(false);
+  const [nameVal, setNameVal] = React.useState(item.name);
   return (
     <div style={{position:"fixed",inset:0,zIndex:400,background:"rgba(250,248,245,.98)",
       backdropFilter:"blur(18px)",display:"flex",flexDirection:"column",overflowY:"auto",animation:"slideUp .25s ease"}}>
@@ -639,7 +632,18 @@ function ItemPanel({ item, wardrobe, onClose, onRefresh }) {
             }
           </div>
           <div style={{flex:1}}>
-            <div style={{fontSize:16,color:CREAM,fontFamily:"'Playfair Display',serif",marginBottom:7,lineHeight:1.3}}>{item.name}</div>
+            {editing
+              ? <div style={{display:"flex",gap:6,marginBottom:7}}>
+                  <input value={nameVal} onChange={e=>setNameVal(e.target.value)}
+                    style={{flex:1,padding:"6px 10px",borderRadius:8,border:`1px solid ${GOLD}`,background:"rgba(255,255,255,.05)",color:CREAM,fontFamily:"'Outfit',sans-serif",fontSize:14,outline:"none"}}
+                    autoFocus/>
+                  <button onClick={()=>{onRename(item.id,nameVal);setEditing(false);}} style={{background:GOLD,border:"none",borderRadius:8,padding:"6px 10px",color:"#fff",cursor:"pointer",fontSize:12,fontFamily:"'Outfit',sans-serif"}}>Save</button>
+                </div>
+              : <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:7}}>
+                  <div style={{fontSize:16,color:CREAM,fontFamily:"'Playfair Display',serif",lineHeight:1.3}}>{item.name}</div>
+                  <button onClick={()=>setEditing(true)} style={{background:"none",border:"none",color:MUTE,cursor:"pointer",fontSize:11,fontFamily:"'Outfit',sans-serif",padding:"2px 6px"}}>✏️</button>
+                </div>
+            }
             <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:7}}>
               {item.brand&&<StoreBadge storeName={item.brand} small/>}
               <span style={{fontSize:11,background:"rgba(184,151,90,.12)",color:GOLD,borderRadius:20,padding:"2px 9px",fontFamily:"'Outfit',sans-serif",textTransform:"capitalize"}}>{item.category}</span>
@@ -668,6 +672,15 @@ function ItemPanel({ item, wardrobe, onClose, onRefresh }) {
               </div>
             )}
 
+            {item.suggestions.trendAlert&&(
+              <div style={{background:"rgba(100,80,200,.08)",border:"1px solid rgba(100,80,200,.2)",borderRadius:13,padding:"10px 15px",marginBottom:12,display:"flex",gap:8,alignItems:"flex-start"}}>
+                <span style={{fontSize:16,flexShrink:0}}>🔥</span>
+                <div>
+                  <div style={{fontSize:9,color:"#9080e0",letterSpacing:2,fontFamily:"'Outfit',sans-serif",marginBottom:3}}>2025 TREND</div>
+                  <p style={{margin:0,color:"#b0a0d0",fontSize:12,fontFamily:"'Outfit',sans-serif",lineHeight:1.6}}>{item.suggestions.trendAlert}</p>
+                </div>
+              </div>
+            )}
             {item.suggestions.closetPairs?.length>0&&(
               <>
                 <div style={{fontSize:10,color:GOLD,letterSpacing:2,fontFamily:"'Outfit',sans-serif",marginBottom:9}}>PAIRS WITH FROM YOUR CLOSET</div>
@@ -1007,6 +1020,7 @@ export default function Labesni() {
   const onFiles=e=>{[...e.target.files].forEach(handleFile);e.target.value="";};
   const onDrop=e=>{e.preventDefault();[...e.dataTransfer.files].forEach(handleFile);};
   const removeItem=id=>{setWardrobe(p=>p.filter(i=>i.id!==id));if(expandedItemId===id)setExpandedItemId(null);};
+  const renameItem=(id,name)=>setWardrobe(p=>p.map(i=>i.id===id?{...i,name}:i));
 
   /* ── camera ── */
   const openCamera=async()=>{
@@ -1175,7 +1189,7 @@ export default function Labesni() {
 
       {/* overlays */}
       {showSearch&&<SearchClothesScreen profile={profile} onAddToCloset={addVirtualItem} onClose={()=>setShowSearch(false)}/>}
-      {expandedItem&&<ItemPanel item={expandedItem} wardrobe={wardrobe} onClose={()=>setExpandedItemId(null)} onRefresh={item=>doFetchSuggestions(item.id,item)}/>}
+      {expandedItem&&<ItemPanel item={expandedItem} wardrobe={wardrobe} onClose={()=>setExpandedItemId(null)} onRefresh={item=>doFetchSuggestions(item.id,item)} onRename={renameItem}/>}
 
       {/* camera */}
       {showCamera&&(
