@@ -1046,17 +1046,47 @@ export default function Labesni() {
     /* splash */
     <div key="s0" style={{minHeight:"90vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",padding:"0 22px"}}>
       <div style={{position:"relative",marginBottom:20}}>
-        <div style={{fontSize:80,lineHeight:1,filter:"drop-shadow(0 8px 28px rgba(184,151,90,.28))"}}>👗</div>
-        <div style={{position:"absolute",bottom:-6,right:-8,background:"rgba(184,151,90,.13)",borderRadius:20,padding:"4px 10px",border:`1px solid rgba(184,151,90,.3)`}}>
-          <span style={{fontSize:10,color:GOLD,fontFamily:"'Outfit',sans-serif",letterSpacing:1}}>🇹🇳 Tunisia</span>
-        </div>
-      </div>
-      <h1 style={{fontSize:48,fontWeight:400,color:CREAM,fontFamily:"'Playfair Display',serif",letterSpacing:2,lineHeight:1.15,margin:"0 0 10px"}}>Labesni</h1>
-      <p style={{fontSize:14,color:GOLD,fontFamily:"'Playfair Display',serif",fontStyle:"italic",margin:"0 0 14px"}}>Tunisia's AI Fashion Stylist</p>
+        <svg width="140" height="86" viewBox="0 0 680 420" fill="none" xmlns="http://www.w3.org/2000/svg" style={{filter:"drop-shadow(0 8px 28px rgba(201,169,110,.3))"}}>
+  <rect width="680" height="420" fill="#1a1410" rx="20"/>
+  <line x1="40" y1="210" x2="220" y2="210" stroke="#c9a96e" strokeWidth="0.5" opacity="0.4"/>
+  <line x1="460" y1="210" x2="640" y2="210" stroke="#c9a96e" strokeWidth="0.5" opacity="0.4"/>
+  <circle cx="255" cy="100" r="22" fill="none" stroke="#c9a96e" strokeWidth="1.5"/>
+  <circle cx="255" cy="78" r="8" fill="none" stroke="#c9a96e" strokeWidth="1.2"/>
+  <line x1="255" y1="122" x2="255" y2="138" stroke="#c9a96e" strokeWidth="1.2"/>
+  <path d="M230 138 L240 138 L250 155 L260 138 L270 138 L278 155 L285 200 L295 310 L215 310 L225 200 L232 155 Z" fill="none" stroke="#c9a96e" strokeWidth="1.5"/>
+  <line x1="225" y1="195" x2="285" y2="195" stroke="#c9a96e" strokeWidth="0.8" opacity="0.6"/>
+  <path d="M200 340 Q255 325 310 340" fill="none" stroke="#c9a96e" strokeWidth="1.2"/>
+  <rect x="285" y="220" width="28" height="22" rx="4" fill="none" stroke="#c9a96e" strokeWidth="1.2"/>
+  <circle cx="425" cy="100" r="22" fill="none" stroke="#c9a96e" strokeWidth="1.5" opacity="0.85"/>
+  <line x1="405" y1="82" x2="445" y2="82" stroke="#c9a96e" strokeWidth="2" opacity="0.7"/>
+  <line x1="425" y1="122" x2="425" y2="138" stroke="#c9a96e" strokeWidth="1.2" opacity="0.85"/>
+  <path d="M395 138 L415 138 L420 155 L425 165 L430 155 L435 138 L455 138 L465 200 L385 200 Z" fill="none" stroke="#c9a96e" strokeWidth="1.5" opacity="0.85"/>
+  <path d="M425 155 L421 190 L425 200 L429 190 Z" fill="#c9a96e" opacity="0.5"/>
+  <path d="M385 200 L390 310 L415 310 L425 260 L435 310 L460 310 L465 200 Z" fill="none" stroke="#c9a96e" strokeWidth="1.5" opacity="0.85"/>
+  <line x1="340" y1="80" x2="340" y2="360" stroke="#c9a96e" strokeWidth="0.5" opacity="0.25" strokeDasharray="4 4"/>
+  <text x="340" y="398" textAnchor="middle" fontFamily="Georgia, serif" fontSize="38" fontWeight="400" fill="#c9a96e" letterSpacing="14">LABESNI</text>
+  <text x="340" y="52" textAnchor="middle" fontFamily="Georgia, serif" fontSize="11" fill="#c9a96e" letterSpacing="4" opacity="0.7">TUNISIA · AI FASHION</text>
+  <path d="M50 40 L40 40 L40 50" fill="none" stroke="#c9a96e" strokeWidth="0.8" opacity="0.5"/>
+  <path d="M630 40 L640 40 L640 50" fill="none" stroke="#c9a96e" strokeWidth="0.8" opacity="0.5"/>
+  <path d="M50 380 L40 380 L40 370" fill="none" stroke="#c9a96e" strokeWidth="0.8" opacity="0.5"/>
+  <path d="M630 380 L640 380 L640 370" fill="none" stroke="#c9a96e" strokeWidth="0.8" opacity="0.5"/>
+</svg>
+            </div>
+      <p style={{fontSize:13,color:GOLD,fontFamily:"'Outfit',sans-serif",margin:"4px 0 14px",letterSpacing:5,opacity:.7}}>TUNISIA · AI FASHION</p>
       <p style={{color:DIM,fontSize:14,fontFamily:"'Outfit',sans-serif",fontWeight:300,maxWidth:300,margin:"0 auto 36px",lineHeight:1.9}}>
         Tell us your style — get a full wardrobe plan with direct buy links from Zara, Nike TN, Jumia and more.
       </p>
       <GoldBtn onClick={()=>setOnbStep(1)} style={{maxWidth:260,margin:"0 auto"}}>Get Started</GoldBtn>
+      <button onClick={()=>{
+        const w=window.open("https://accounts.google.com/o/oauth2/v2/auth?client_id=YOUR_GOOGLE_CLIENT_ID&redirect_uri="+encodeURIComponent(window.location.origin)+"&response_type=token&scope=email%20profile","_blank","width=500,height=600");
+      }} style={{
+        width:"100%",maxWidth:260,margin:"10px auto 0",display:"flex",alignItems:"center",justifyContent:"center",gap:10,
+        padding:"13px 24px",borderRadius:14,border:"1.5px solid rgba(201,169,110,.3)",
+        background:"rgba(255,255,255,.05)",cursor:"pointer",fontFamily:"'Outfit',sans-serif",fontSize:14,color:CREAM
+      }}>
+        <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z"/></svg>
+        Continue with Google
+      </button>
       <p style={{marginTop:13,fontSize:11,color:MUTE,fontFamily:"'Outfit',sans-serif",letterSpacing:1}}>FREE · MADE FOR TUNISIA</p>
     </div>,
 
@@ -1197,7 +1227,27 @@ export default function Labesni() {
             borderBottom:`1px solid rgba(201,169,110,.2)`,background:"rgba(250,248,245,.95)",backdropFilter:"blur(16px)",position:"sticky",top:0,zIndex:100}}>
             <div>
               <div style={{display:"flex",alignItems:"center",gap:7}}>
-                <div style={{fontSize:17,fontWeight:700,letterSpacing:4,color:CREAM,fontFamily:"'Outfit',sans-serif"}}>LABESNI</div>
+                <div style={{display:"flex",alignItems:"center",gap:7}}>
+                <svg width="32" height="32" viewBox="0 0 680 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="420" fill="#1a1410" rx="20"/>
+  <circle cx="255" cy="100" r="22" fill="none" stroke="#c9a96e" strokeWidth="4"/>
+  <path d="M230 138 L250 155 L270 138 L285 200 L295 310 L215 310 L225 200 L232 155 Z" fill="none" stroke="#c9a96e" strokeWidth="4"/>
+  <circle cx="425" cy="100" r="22" fill="none" stroke="#c9a96e" strokeWidth="4" opacity="0.85"/>
+  <path d="M395 138 L420 155 L425 165 L430 155 L455 138 L465 200 L385 200 Z" fill="none" stroke="#c9a96e" strokeWidth="4" opacity="0.85"/>
+  <path d="M385 200 L390 310 L415 310 L425 260 L435 310 L460 310 L465 200 Z" fill="none" stroke="#c9a96e" strokeWidth="4" opacity="0.85"/>
+  <line x1="340" y1="80" x2="340" y2="360" stroke="#c9a96e" strokeWidth="2" opacity="0.3" strokeDasharray="8 8"/>
+</svg>
+<svg width="44" height="27" viewBox="0 0 680 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="420" fill="#1a1410" rx="20"/>
+  <circle cx="255" cy="100" r="22" fill="none" stroke="#c9a96e" strokeWidth="4"/>
+  <path d="M230 138 L250 155 L270 138 L285 200 L295 310 L215 310 L225 200 L232 155 Z" fill="none" stroke="#c9a96e" strokeWidth="4"/>
+  <circle cx="425" cy="100" r="22" fill="none" stroke="#c9a96e" strokeWidth="4" opacity="0.85"/>
+  <path d="M395 138 L420 155 L425 165 L430 155 L455 138 L465 200 L385 200 Z" fill="none" stroke="#c9a96e" strokeWidth="4" opacity="0.85"/>
+  <path d="M385 200 L390 310 L415 310 L425 260 L435 310 L460 310 L465 200 Z" fill="none" stroke="#c9a96e" strokeWidth="4" opacity="0.85"/>
+  <line x1="340" y1="80" x2="340" y2="360" stroke="#c9a96e" strokeWidth="2" opacity="0.3" strokeDasharray="8 8"/>
+  <text x="340" y="398" textAnchor="middle" fontFamily="Georgia, serif" fontSize="60" fontWeight="400" fill="#c9a96e" letterSpacing="14">LABESNI</text>
+</svg>
+              </div>
                 <span style={{fontSize:10,color:GOLD,background:"rgba(201,169,110,.12)",border:`1px solid rgba(201,169,110,.3)`,borderRadius:20,padding:"2px 7px",fontFamily:"'Outfit',sans-serif"}}>🇹🇳 TN</span>
               </div>
               {profile.name&&<div style={{fontSize:9,color:MUTE,letterSpacing:2,fontFamily:"'Outfit',sans-serif",marginTop:1}}>HI, {profile.name.toUpperCase()}</div>}
