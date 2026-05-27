@@ -50,6 +50,23 @@ const SL = { fontSize:10,color:GOLD,letterSpacing:2,fontFamily:"'Outfit',sans-se
 
 /* ─── HELPERS ─── */
 const toB64 = f => new Promise((r,j)=>{ const fr=new FileReader(); fr.onload=()=>r(fr.result.split(",")[1]); fr.onerror=j; fr.readAsDataURL(f); });
+/* ─── REMOVE BACKGROUND ─── */
+async function removeBackground(file) {
+  try {
+    const formData = new FormData();
+    formData.append("image_file", file);
+    formData.append("size", "auto");
+    const res = await fetch("https://api.remove.bg/v1.0/removebg", {
+      method: "POST",
+      headers: { "X-Api-Key": "HusPW2BsyDhSrymQ125GRoWS" },
+      body: formData,
+    });
+    if(!res.ok) return null;
+    const blob = await res.blob();
+    return URL.createObjectURL(blob);
+  } catch { return null; }
+}
+
 const parseJSON = raw => { try{ return JSON.parse(raw.replace(/```json|```/g,"").trim()); }catch{ return null; } };
 
 /* Build a DIRECT product URL for a store */
@@ -965,12 +982,15 @@ export default function Labesni() {
     if(!file?.type.startsWith("image/")) return;
     const url=URL.createObjectURL(file);
     const id=Date.now()+Math.random();
-    const ni={id,name:"Reading item…",category:"unknown",color:"",colorHex:"#888",url,analyzing:true,suggestions:null,loadingSugg:false};
+    const ni={id,name:"Scanning item…",category:"unknown",color:"",colorHex:"#888",url,analyzing:true,suggestions:null,loadingSugg:false};
     setWardrobe(p=>[...p,ni]);
     try{
+      // Remove background first
+      const cleanUrl = await removeBackground(file) || url;
+      setWardrobe(p=>p.map(i=>i.id===id?{...i,url:cleanUrl}:i));
       const b64=await toB64(file);
       const info=await analyseImage(b64,file.type,profile);
-      const full={...ni,...info,url,analyzing:false};
+      const full={...ni,...info,url:cleanUrl,analyzing:false};
       setWardrobe(p=>p.map(i=>i.id===id?full:i));
       doFetchSuggestions(id,full);
     }catch{ setWardrobe(p=>p.map(i=>i.id===id?{...i,name:"Clothing item",analyzing:false}:i)); }
