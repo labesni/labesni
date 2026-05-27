@@ -447,12 +447,12 @@ function SearchClothesScreen({ profile, onAddToCloset, onClose }) {
                 <div key={i} style={{background:"rgba(255,255,255,.03)",borderRadius:16,
                   border:`1px solid ${added[item.name]?"rgba(90,154,90,.3)":BORDER}`,
                   overflow:"hidden",transition:"border-color .2s"}}>
-                  <img
-                    src={`https://loremflickr.com/400/300/${encodeURIComponent((item.imageKeyword||item.name).split(" ").slice(0,3).join(","))}`}
-                    alt={item.name}
-                    style={{width:"100%",height:180,objectFit:"cover",display:"block"}}
-                    onError={e=>{e.target.style.display="none";}}
-                  />
+                  <div style={{width:"100%",height:140,background:`linear-gradient(135deg, ${item.colorHex||"#c9a96e"}22, ${item.colorHex||"#c9a96e"}44)`,display:"flex",alignItems:"center",justifyContent:"center",borderBottom:"1px solid rgba(201,169,110,.1)"}}>
+                    <div style={{textAlign:"center"}}>
+                      <div style={{fontSize:52,marginBottom:4}}>{CAT_EMOJI[item.category]||"👔"}</div>
+                      <div style={{fontSize:11,color:item.colorHex||"#c9a96e",fontFamily:"'Outfit',sans-serif",fontWeight:600,letterSpacing:1}}>{item.color?.toUpperCase()}</div>
+                    </div>
+                  </div>
                   <div style={{padding:"14px 16px"}}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
                     <div style={{flex:1,marginRight:10}}>
