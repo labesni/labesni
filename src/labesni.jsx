@@ -985,8 +985,9 @@ export default function Labesni() {
   const savedProfile = (() => { try { const p=localStorage.getItem("labesni_profile"); return p?JSON.parse(p):null; } catch{return null;} })();
   const savedWardrobe = (() => { try { const w=localStorage.getItem("labesni_wardrobe"); return w?JSON.parse(w):[]; } catch{return [];} })();
   const savedLang = (() => { try { return localStorage.getItem("labesni_lang")||"en"; } catch{return "en";} })();
+  const hasOAuthToken = window.location.hash.includes("access_token");
 
-  const [screen,setScreen]                 = useState(savedProfile?.gender ? "wardrobe" : "onboarding");
+  const [screen,setScreen]                 = useState(hasOAuthToken ? "wardrobe" : (savedProfile?.gender ? "wardrobe" : "onboarding"));
   const [onbStep,setOnbStep]               = useState(0);
   const [profile,setProfile]               = useState(savedProfile || { name:"",gender:"",styles:[],occasions:[],budget:"",brands:[],city:"Tunis" });
   const [wardrobe,setWardrobe]             = useState(savedWardrobe);
