@@ -1011,13 +1011,23 @@ export default function Labesni() {
 
   /* ── Auth ── */
   useEffect(()=>{
+    // Handle OAuth redirect
     supabase.auth.getSession().then(({data:{session}})=>{
-      setUser(session?.user||null);
+      if(session?.user){
+        setUser(session.user);
+        loadUserData(session.user.id);
+      }
       setAuthLoading(false);
     });
     const {data:{subscription}} = supabase.auth.onAuthStateChange((_,session)=>{
-      setUser(session?.user||null);
-      if(session?.user) loadUserData(session.user.id);
+      if(session?.user){
+        setUser(session.user);
+        loadUserData(session.user.id);
+        setScreen("wardrobe");
+        setActiveNav("wardrobe");
+      } else {
+        setUser(null);
+      }
     });
     return ()=>subscription.unsubscribe();
   },[]);
